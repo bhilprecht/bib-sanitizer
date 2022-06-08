@@ -35,6 +35,6 @@ class Integrator:
         for original_key, entry in original_bibtex.entries.items():
             target_key = self.match(entry)
             if target_key is None:
-                print(f"No match found for bibtex key {original_key}")
+                raise ValueError(f"Warning: No match found for bibtex key {original_key}")
             replacement[original_key] = target_key
         return replacement

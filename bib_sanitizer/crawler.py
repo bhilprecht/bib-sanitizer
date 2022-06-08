@@ -1,3 +1,4 @@
+import re
 import urllib.parse
 
 from tqdm import tqdm
@@ -34,7 +35,7 @@ class DBLPReplacer:
     @staticmethod
     def publication_key(bibentry):
         """
-        Generates normalized string representation of a bibentry
+        Generates normalized string representation of a bibentry based on title and name of first author
         :param bibentry:
         :type bibentry:
         :return:
@@ -54,11 +55,17 @@ class DBLPReplacer:
 
         st = ' '.join(st)
 
-        # remove special characters
-        st = ''.join(e for e in st if e.isalnum() or e == ' ' or e == '-')
+        special_chars = ['-', ':', '&']
 
-        # remove double -
-        st = st.replace('--', '-')
+        # remove special characters but keep commonly used delimiters
+        st = ''.join(e for e in st if e.isalnum() or e in set(special_chars + [' ']))
+
+        # replace common characters in titles by whitespace since these are often not consistent
+        for special_char in special_chars:
+            st = st.replace(special_char, ' ')
+
+        # remove double white space
+        st = re.sub(' +', ' ', st)
 
         return st
 
